@@ -1,0 +1,139 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Can I ask you something?</title>
+  <style>
+    :root{
+      --bg1:#ff9a9e;
+      --bg2:#fad0c4;
+      --accent:#ff4d6d;
+      --muted:#6b6b6b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background: linear-gradient(120deg,var(--bg1),var(--bg2));
+      display:flex;align-items:center;justify-content:center;
+      padding:24px;
+    }.card{
+  width:100%;max-width:720px;border-radius:20px;padding:36px;
+  background: rgba(255,255,255,0.9);
+  box-shadow:0 12px 30px rgba(0,0,0,0.15);
+  text-align:center;position:relative;overflow:hidden;
+}
+
+h1{margin:0 0 8px;color:var(--accent)}
+p.lead{margin:0 0 22px;color:var(--muted)}
+
+.buttons{
+  position:relative;
+  height:120px; /* give space for movement */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+button{
+  border:0;padding:12px 22px;font-size:16px;border-radius:999px;
+  cursor:pointer;transition:transform .15s ease;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+  position:absolute;
+}
+
+.yes{
+  position:static; /* stays centered */
+  background:linear-gradient(90deg,#ff6b81,#ff4d6d);
+  color:#fff;font-weight:700;margin-right:140px;
+}
+
+.no{
+  background:#fff;border:2px solid var(--accent);
+  color:var(--accent);font-weight:700;
+  left:60%;top:40%;
+}
+
+.result{
+  margin-top:20px;opacity:0;transform:translateY(10px);
+  transition:.4s;pointer-events:none;
+}
+.result.show{opacity:1;transform:none;pointer-events:auto}
+
+.heart{
+  font-size:60px;animation:pulse 1s infinite;
+}
+@keyframes pulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.2)}
+  100%{transform:scale(1)}
+}
+
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Salma, will you be my Valentine?</h1>
+    <p class="lead">Choose wisely 😄</p><div class="buttons" id="btnArea">
+  <button id="yes" class="yes">Yes 💖</button>
+  <button id="no" class="no">No 😅</button>
+</div>
+
+<div id="result" class="result">
+  <div class="heart">❤️</div>
+  <div id="msg">Yay! You made my day,Salma. I will be with you forever ❤️</div>
+</div>
+
+  </div>  <script>
+    const yes = document.getElementById('yes');
+    const no = document.getElementById('no');
+    const area = document.getElementById('btnArea');
+    const result = document.getElementById('result');
+
+    yes.onclick = ()=>{
+      result.classList.add('show');
+    }
+
+    // Make NO basically impossible to click
+    function dodge(){
+      const rect = area.getBoundingClientRect();
+      const btnRect = no.getBoundingClientRect();
+
+      const maxX = rect.width - btnRect.width;
+      const maxY = rect.height - btnRect.height;
+
+      const x = Math.random()*maxX;
+      const y = Math.random()*maxY;
+
+      no.style.left = x + 'px';
+      no.style.top = y + 'px';
+    }
+
+    // Move when cursor gets close
+    area.addEventListener('mousemove', (e)=>{
+      const b = no.getBoundingClientRect();
+      const distX = Math.abs(e.clientX - (b.left + b.width/2));
+      const distY = Math.abs(e.clientY - (b.top + b.height/2));
+
+      if(distX < 120 && distY < 80){
+        dodge();
+      }
+    });
+
+    // Also move on hover/touch attempts
+    no.addEventListener('mouseenter', dodge);
+    no.addEventListener('touchstart', (e)=>{
+      e.preventDefault();
+      dodge();
+    });
+
+    // Safety: if somehow clicked — still dodge 😄
+    no.addEventListener('click', (e)=>{
+      e.preventDefault();
+      dodge();
+    });
+  </script></body>
+</html>
